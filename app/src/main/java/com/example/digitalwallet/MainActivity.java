@@ -135,11 +135,11 @@ public class MainActivity extends AppCompatActivity {
 
                         // 各種TextView取得
                         final TextView cateText1 = allocateLayout.findViewById(R.id.cateText1);
-                        TextView cateText2 = allocateLayout.findViewById(R.id.cateText2);
+                        final TextView cateText2 = allocateLayout.findViewById(R.id.cateText2);
                         final TextView beforeAmountText1 = allocateLayout.findViewById(R.id.beforeAmount1);
-                        TextView beforeAmountText2 = allocateLayout.findViewById(R.id.beforeAmount2);
+                        final TextView beforeAmountText2 = allocateLayout.findViewById(R.id.beforeAmount2);
                         final TextView afterAmountText1 = allocateLayout.findViewById(R.id.afterAmount1);
-                        TextView afterAmountText2 = allocateLayout.findViewById(R.id.afterAmount2);
+                        final TextView afterAmountText2 = allocateLayout.findViewById(R.id.afterAmount2);
 
                         // ダイアログを開くときまず未分類と残額を表示
                         cateText1.setText(categoryList[0]);
@@ -153,10 +153,10 @@ public class MainActivity extends AppCompatActivity {
                         ArrayAdapter<String> cateAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, categoryList);
                         cateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         // 割り当て元
-                        Spinner cateSpinner1 = (Spinner) allocateLayout.findViewById(R.id.cateSpinner1);
+                        final Spinner cateSpinner1 = (Spinner) allocateLayout.findViewById(R.id.cateSpinner1);
                         cateSpinner1.setAdapter(cateAdapter);
                         // 割り当て先
-                        Spinner cateSpinner2 = (Spinner) allocateLayout.findViewById(R.id.cateSpinner2);
+                        final Spinner cateSpinner2 = (Spinner) allocateLayout.findViewById(R.id.cateSpinner2);
                         cateSpinner2.setAdapter(cateAdapter);
 
                         // スピナーの項目が変更されたとき(割り当て元)
@@ -174,9 +174,53 @@ public class MainActivity extends AppCompatActivity {
                                             allocateAmount = Integer.parseInt(allocateAmountText.getText().toString());
                                         }
 
-                                        int index = spinner.getSelectedItemPosition();
-                                        int afterAmount1 = cateAmount[index] - allocateAmount;
-                                        beforeAmountText1.setText(cateAmount[index] + "円");
+                                        int index1 = spinner.getSelectedItemPosition();
+                                        int index2 = cateSpinner2.getSelectedItemPosition();
+                                        // 割り当て先と同じカテゴリーの場合0
+                                        if (index1 == index2) {
+                                            allocateAmount = 0;
+                                        }
+
+                                        int afterAmount1 = cateAmount[index1] - allocateAmount;
+                                        int afterAmount2 = cateAmount[index2] + allocateAmount;
+                                        beforeAmountText1.setText(cateAmount[index1] + "円");
+                                        afterAmountText1.setText(afterAmount1 + "円");
+                                        afterAmountText2.setText(afterAmount2 + "円");
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parent) {
+
+                                    }
+                                }
+                        );
+
+                        // スピナーの項目が変更されたとき(割り当て先)
+                        cateSpinner2.setOnItemSelectedListener(
+                                new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                        Spinner spinner = (Spinner) parent;
+                                        String item = (String) spinner.getSelectedItem();
+                                        cateText2.setText(item);
+
+                                        if (allocateAmountText.getText().toString().equals("")) {
+                                            allocateAmount = 0;
+                                        } else {
+                                            allocateAmount = Integer.parseInt(allocateAmountText.getText().toString());
+                                        }
+
+                                        int index2 = spinner.getSelectedItemPosition();
+                                        int index1 = cateSpinner1.getSelectedItemPosition();
+                                        // 割り当て元と同じカテゴリーの場合0
+                                        if (index2 == index1) {
+                                            allocateAmount = 0;
+                                        }
+
+                                        int afterAmount2 = cateAmount[index2] + allocateAmount;
+                                        int afterAmount1 = cateAmount[index1] - allocateAmount;
+                                        beforeAmountText2.setText(cateAmount[index2] + "円");
+                                        afterAmountText2.setText(afterAmount2 + "円");
                                         afterAmountText1.setText(afterAmount1 + "円");
                                     }
 
