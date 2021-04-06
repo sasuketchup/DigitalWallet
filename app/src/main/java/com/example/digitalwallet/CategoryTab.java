@@ -58,8 +58,35 @@ public class CategoryTab extends Fragment {
         Button[] categoryBtn = new Button[(int) countCT];
         TextView[] categoryAmountView = new TextView[(int) countCT];
 
+        // 未分類を先頭に固定
+        category[0] = new LinearLayout(getContext());
+        category[0].setOrientation(LinearLayout.HORIZONTAL);
+        categoryBtn[0] = new Button(getContext());
+        categoryAmountView[0] = new TextView(getContext());
+
+        String categoryName0 = cursor.getString(1);
+        int categoryAmount0 = cursor.getInt(2);
+
+        categoryBtn[0].setText(categoryName0);
+        categoryBtn[0].setPadding(100, 0, 0, 0);
+        categoryAmountView[0].setText(categoryAmount0 + "円");
+        categoryAmountView[0].setTextSize(24);
+        categoryAmountView[0].setGravity(Gravity.RIGHT);
+        categoryAmountView[0].setPadding(0, 0, 100, 0);
+
+        LinearLayout.LayoutParams layoutParams0 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        layoutParams0.weight = 1;
+        categoryBtn[0].setLayoutParams(layoutParams0);
+        categoryAmountView[0].setLayoutParams(layoutParams0);
+
+        category[0].addView(categoryBtn[0]);
+        category[0].addView(categoryAmountView[0]);
+        varCategoryLayout.addView(category[0]);
+
+        // 残りは最新から表示
+        cursor.moveToLast();
         // カテゴリー一覧を表示
-        for (int i=0; i<countCT; i++) {
+        for (int i=1; i<countCT; i++) {
             category[i] = new LinearLayout(getContext());
             category[i].setOrientation(LinearLayout.HORIZONTAL);
             categoryBtn[i] = new Button(getContext());
@@ -84,7 +111,7 @@ public class CategoryTab extends Fragment {
             category[i].addView(categoryAmountView[i]);
             varCategoryLayout.addView(category[i]);
 
-            cursor.moveToNext();
+            cursor.moveToPrevious();
         }
         cursor.close();
 

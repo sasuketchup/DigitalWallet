@@ -97,13 +97,20 @@ public class MainActivity extends AppCompatActivity {
         // すべてのカテゴリーと残額取得
         Cursor cursor0 = db.query("CategoryTable", new String[] {"id", "category", "amount"}, null, null, null, null, null);
         cursor0.moveToFirst();
+        // 未分類を先頭に固定
+        categoryID[0] = cursor0.getInt(0);
+        categoryList[0] = cursor0.getString(1);
+        cateAmount[0] = cursor0.getInt(2);
+        totalAmount += cateAmount[0];
+        // 残りは最新から格納
+        cursor0.moveToLast();
         // 合計金額計算&カテゴリー名とidを配列に格納
-        for (int i=0; i<countCT; i++) {
+        for (int i=1; i<countCT; i++) {
             categoryID[i] = cursor0.getInt(0);
             categoryList[i] = cursor0.getString(1);
             cateAmount[i] = cursor0.getInt(2);
             totalAmount += cateAmount[i];
-            cursor0.moveToNext();
+            cursor0.moveToPrevious();
         }
         cursor0.close();
         // 所持金合計表示
