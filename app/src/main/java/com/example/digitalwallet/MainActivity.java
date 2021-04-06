@@ -11,6 +11,8 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -231,16 +233,44 @@ public class MainActivity extends AppCompatActivity {
                                 }
                         );
 
-                        // OKボタン
-                        builder.setPositiveButton(
-                                "OK",
-                                new DialogInterface.OnClickListener() {
+                        // エディットテキストが変更されるたびに実行
+                        allocateAmountText.addTextChangedListener(
+                                new TextWatcher() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                                    }
+
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                                        if (s.toString().equals("")) {
+                                            allocateAmount = 0;
+                                        } else {
+                                            allocateAmount = Integer.parseInt(s.toString());
+                                        }
+
+                                        int index1 = cateSpinner1.getSelectedItemPosition();
+                                        int index2 = cateSpinner2.getSelectedItemPosition();
+                                        // 割り当て元と割り当て先が同じカテゴリーの場合0
+                                        if (index1 == index2) {
+                                            allocateAmount = 0;
+                                        }
+
+                                        int afterAmount1 = cateAmount[index1] - allocateAmount;
+                                        int afterAmount2 = cateAmount[index2] + allocateAmount;
+                                        afterAmountText1.setText(afterAmount1 + "円");
+                                        afterAmountText2.setText(afterAmount2 + "円");
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable s) {
 
                                     }
                                 }
                         );
+
+                        builder.setPositiveButton("OK", null);
 
                         // キャンセルボタン
                         builder.setNegativeButton(
@@ -253,7 +283,60 @@ public class MainActivity extends AppCompatActivity {
                                 }
                         );
 
-                        builder.show();
+                        final AlertDialog allocateDialog = builder.show();
+
+                        Button OKBtn = allocateDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+
+                        // OKボタン
+                        OKBtn.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        // スピナーからカテゴリーのインデックスを取得
+                                        int index1 = cateSpinner1.getSelectedItemPosition();
+                                        int index2 = cateSpinner2.getSelectedItemPosition();
+
+                                        // エディットテキストから金額を取得
+                                        String allocateAmountStr = allocateAmountText.getText().toString();
+
+                                        String toastText = "";
+
+                                        if (index1 == index2) { // カテゴリーが同じ場合
+                                            if (allocateAmountStr.equals("")) { // かつ未入力の場合
+                                                toastText = "同じカテゴリーが選択されています！\n金額を入力してください！";
+                                            } else {
+                                                toastText = "同じカテゴリーが選択されています！";
+                                            }
+                                            Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_LONG).show();
+                                        } else if (allocateAmountStr.equals("")) { // 未入力の場合
+                                            toastText = "金額を入力してください！";
+                                            Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_LONG).show();
+                                        } else { // 条件が揃っていれば保存
+                                            allocateAmount = Integer.parseInt(allocateAmountStr);
+
+                                            int afterAmount1 = cateAmount[index1] - allocateAmount;
+                                            int afterAmount2 = cateAmount[index2] + allocateAmount;
+
+                                            ContentValues contentValues1 = new ContentValues();
+                                            ContentValues contentValues2 = new ContentValues();
+                                            contentValues1.put("amount", afterAmount1);
+                                            contentValues2.put("amount", afterAmount2);
+                                            db.update("CategoryTable", contentValues1, "id=" + categoryID[index1], null);
+                                            db.update("CategoryTable", contentValues2, "id=" + categoryID[index2], null);
+
+                                            allocateDialog.dismiss();
+                                            // アクティビティ再起動(タブ保持)
+                                            Intent intent2 = new Intent(MainActivity.this, MainActivity.class);
+                                            intent2.putExtra("keep_item", viewPager.getCurrentItem());
+                                            finish();
+                                            overridePendingTransition(0, 0);
+                                            startActivity(intent2);
+                                            overridePendingTransition(0, 0);
+                                        }
+                                    }
+                                }
+                        );
                     }
                 }
         );
