@@ -123,12 +123,28 @@ public class MainActivity extends AppCompatActivity {
 
         // 支払いテーブルの行数取得
         long countPT = DatabaseUtils.queryNumEntries(db, "PaymentTable");
-        // テーブルが空でないとき、最新のid取得
+        // テーブルが空でないとき、最新のid取得&内容テーブルが空なら"-"を挿入
         if (countPT > 0) {
             Cursor cursor = db.query("PaymentTable", new String[] {"id", "month", "date", "category", "inout", "amount"}, null, null, null, null, null);
             cursor.moveToLast();
             latestPTID = cursor.getInt(0) + 1;
             cursor.close();
+            // 内容テーブルの行数取得
+            long countDT = DatabaseUtils.queryNumEntries(db, "DetailTable");
+            if (countDT == 0) {
+                Cursor cursor2 = db.query("PaymentTable", new String[]{"id", "month", "date", "category", "inout", "amount"}, null, null, null, null, null);
+                cursor2.moveToFirst();
+                for (int i=0; i<countPT; i++) {
+                    int paymentID = cursor2.getInt(0);
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("id", paymentID);
+                    contentValues.put("detail", "-");
+                    db.insert("DetailTable", null, contentValues);
+
+                    cursor2.moveToNext();
+                }
+                cursor2.close();
+            }
         }
 
         // 所持金合計ボタン(割り当て)
@@ -426,6 +442,13 @@ public class MainActivity extends AppCompatActivity {
                                             int index =cateSpinner.getSelectedItemPosition();
                                             category = categoryID[index];
 
+                                            // エディットテキストから収支の内容取得
+                                            EditText detailText = layout.findViewById(R.id.inputDetail);
+                                            String detail = detailText.getText().toString();
+                                            if (detail.equals("")) {
+                                                detail = "-";
+                                            }
+
                                             // 残額計算のための金額
                                             int inoutAmount = 0;
 
@@ -461,6 +484,11 @@ public class MainActivity extends AppCompatActivity {
                                             contentValues1.put("inout", inout);
                                             contentValues1.put("amount", amount);
                                             db.insert("PaymentTable", null, contentValues1);
+                                            // 保存(内容)
+                                            ContentValues contentValues3 = new ContentValues();
+                                            contentValues3.put("id", latestPTID);
+                                            contentValues3.put("detail", detail);
+                                            db.insert("DetailTable", null, contentValues3);
                                             // 保存(カテゴリー)
                                             ContentValues contentValues2 = new ContentValues();
                                             contentValues2.put("amount", categoryAmount);

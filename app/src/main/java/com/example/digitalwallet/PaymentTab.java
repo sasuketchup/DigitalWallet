@@ -42,12 +42,17 @@ public class PaymentTab extends Fragment {
             Cursor cursor = db.query("PaymentTable", new String[] {"id", "month", "date", "category", "inout", "amount"}, null, null, null, null, null);
             cursor.moveToLast();
 
+            Cursor cursor2 = db.query("DetailTable", new String[]{"id", "detail"}, null, null, null, null, null);
+            cursor2.moveToLast();
+
             LinearLayout varPaymentLayout = view.findViewById(R.id.paymentLayout);
             LinearLayout[] payment = new LinearLayout[(int) countPT];
 
             TextView[] dateText = new TextView[(int) countPT];
             TextView[] categoryText = new TextView[(int) countPT];
             TextView[] amountText = new TextView[(int) countPT];
+
+            TextView[] detailText = new TextView[(int) countPT];
 
             // 履歴を表示
             for (int i=0; i<countPT; i++) {
@@ -56,6 +61,7 @@ public class PaymentTab extends Fragment {
                 dateText[i] = new TextView(getContext());
                 categoryText[i] = new TextView(getContext());
                 amountText[i] = new TextView(getContext());
+                detailText[i] = new TextView(getContext());
 
                 int month = cursor.getInt(1);
                 int date = cursor.getInt(2);
@@ -63,8 +69,13 @@ public class PaymentTab extends Fragment {
                 int inout = cursor.getInt(4);
                 int amount = cursor.getInt(5);
 
+                String detail = cursor2.getString(1);
+
                 dateText[i].setText(month + "/" + date);
                 dateText[i].setTextSize(20);
+
+                detailText[i].setText(detail);
+                detailText[i].setTextSize(20);
 
                 Cursor cursor1 = db.query("CategoryTable", new String[] {"id", "category", "amount"}, "id=" + categoryId, null, null, null, null);
                 cursor1.moveToFirst();
@@ -88,13 +99,15 @@ public class PaymentTab extends Fragment {
 
                 dateText[i].setPadding(100, 0, 0, 0);
                 dateText[i].setGravity(Gravity.RIGHT);
+                detailText[i].setGravity(Gravity.CENTER_HORIZONTAL);
                 categoryText[i].setGravity(Gravity.CENTER_HORIZONTAL);
                 amountText[i].setGravity(Gravity.RIGHT);
                 amountText[i].setPadding(0, 0, 100, 0);
 
-                dateText[i].setWidth(300);
-                categoryText[i].setWidth(400);
-                amountText[i].setWidth(500);
+                dateText[i].setWidth(200);
+                detailText[i].setWidth(300);
+                categoryText[i].setWidth(300);
+                amountText[i].setWidth(400);
 
                 // payment[i].setWeightSum(5);
                 // payment[i].setScaleX(0.5f);
@@ -114,13 +127,16 @@ public class PaymentTab extends Fragment {
 //                amountText[i].setBackgroundColor(Color.BLUE);
 
                 payment[i].addView(dateText[i]);
+                payment[i].addView(detailText[i]);
                 payment[i].addView(categoryText[i]);
                 payment[i].addView(amountText[i]);
                 varPaymentLayout.addView(payment[i]);
 
                 cursor.moveToPrevious();
+                cursor2.moveToPrevious();
             }
             cursor.close();
+            cursor2.close();
         }
 
     }
