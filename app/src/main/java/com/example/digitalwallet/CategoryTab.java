@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -67,9 +68,18 @@ public class CategoryTab extends Fragment {
         String categoryName0 = cursor.getString(1);
         int categoryAmount0 = cursor.getInt(2);
 
+        // 残額によって色分け
+        int amountColor0 = Color.GRAY;
+        if (categoryAmount0 > 0) {
+            amountColor0 = Color.GREEN;
+        } else if (categoryAmount0 < 0) {
+            amountColor0 = Color.RED;
+        }
+
         categoryBtn[0].setText(categoryName0);
         categoryBtn[0].setPadding(100, 0, 0, 0);
         categoryAmountView[0].setText(categoryAmount0 + "円");
+        categoryAmountView[0].setTextColor(amountColor0);
         categoryAmountView[0].setTextSize(24);
         categoryAmountView[0].setGravity(Gravity.RIGHT);
         categoryAmountView[0].setPadding(0, 0, 100, 0);
@@ -95,9 +105,18 @@ public class CategoryTab extends Fragment {
             String categoryName = cursor.getString(1);
             int categoryAmount = cursor.getInt(2);
 
+            // 残額によって色分け
+            int amountColor = Color.GRAY;
+            if (categoryAmount > 0) {
+                amountColor = Color.GREEN;
+            } else if (categoryAmount < 0) {
+                amountColor = Color.RED;
+            }
+
             categoryBtn[i].setText(categoryName);
             categoryBtn[i].setPadding(100, 0, 0, 0);
             categoryAmountView[i].setText(categoryAmount + "円");
+            categoryAmountView[i].setTextColor(amountColor);
             categoryAmountView[i].setTextSize(24);
             categoryAmountView[i].setGravity(Gravity.RIGHT);
             categoryAmountView[i].setPadding(0, 0, 100, 0);

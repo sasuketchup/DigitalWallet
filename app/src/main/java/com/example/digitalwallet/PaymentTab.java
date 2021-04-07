@@ -77,9 +77,11 @@ public class PaymentTab extends Fragment {
                 switch (inout) {
                     case 0:
                         amountText[i].setText("-" + amount + "円");
+                        amountText[i].setTextColor(Color.BLUE);
                         break;
                     case 1:
                         amountText[i].setText("+" + amount + "円");
+                        amountText[i].setTextColor(Color.GREEN);
                         break;
                 }
                 amountText[i].setTextSize(24);

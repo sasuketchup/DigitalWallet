@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -117,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
         TextView totalText = findViewById(R.id.totalAmount);
         totalText.setText(String.valueOf(totalAmount));
 
+        // TextViewのデフォルト色取得
+        final int defaultColor = totalText.getCurrentTextColor();
+
         // 支払いテーブルの行数取得
         long countPT = DatabaseUtils.queryNumEntries(db, "PaymentTable");
         // テーブルが空でないとき、最新のid取得
@@ -194,6 +198,12 @@ public class MainActivity extends AppCompatActivity {
                                         int afterAmount2 = cateAmount[index2] + allocateAmount;
                                         beforeAmountText1.setText(cateAmount[index1] + "円");
                                         afterAmountText1.setText(afterAmount1 + "円");
+                                        // マイナスの場合色付け
+                                        if (afterAmount1 < 0) {
+                                            afterAmountText1.setTextColor(Color.RED);
+                                        } else {
+                                            afterAmountText1.setTextColor(defaultColor);
+                                        }
                                         afterAmountText2.setText(afterAmount2 + "円");
                                     }
 
@@ -231,6 +241,12 @@ public class MainActivity extends AppCompatActivity {
                                         beforeAmountText2.setText(cateAmount[index2] + "円");
                                         afterAmountText2.setText(afterAmount2 + "円");
                                         afterAmountText1.setText(afterAmount1 + "円");
+                                        // マイナスの場合色付け
+                                        if (afterAmount1 < 0) {
+                                            afterAmountText1.setTextColor(Color.RED);
+                                        } else {
+                                            afterAmountText1.setTextColor(defaultColor);
+                                        }
                                     }
 
                                     @Override
@@ -267,6 +283,12 @@ public class MainActivity extends AppCompatActivity {
                                         int afterAmount1 = cateAmount[index1] - allocateAmount;
                                         int afterAmount2 = cateAmount[index2] + allocateAmount;
                                         afterAmountText1.setText(afterAmount1 + "円");
+                                        // マイナスの場合色付け
+                                        if (afterAmount1 < 0) {
+                                            afterAmountText1.setTextColor(Color.RED);
+                                        } else {
+                                            afterAmountText1.setTextColor(defaultColor);
+                                        }
                                         afterAmountText2.setText(afterAmount2 + "円");
                                     }
 
