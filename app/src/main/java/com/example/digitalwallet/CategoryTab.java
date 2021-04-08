@@ -63,6 +63,9 @@ public class CategoryTab extends Fragment {
         mlp.setMargins(100, mlp.topMargin, 100, mlp.bottomMargin);
         varCategoryLayout.setLayoutParams(mlp);
 
+        // カテゴリー名を押したときのためにidを取得
+        final int[] categoryID = new int[(int) countCT];
+
         Button[] categoryBtn = new Button[(int) countCT];
         TextView[] categoryAmountView = new TextView[(int) countCT];
 
@@ -71,6 +74,8 @@ public class CategoryTab extends Fragment {
         category[0].setOrientation(LinearLayout.HORIZONTAL);
         categoryBtn[0] = new Button(getContext());
         categoryAmountView[0] = new TextView(getContext());
+
+        categoryID[0] = cursor.getInt(0);
 
         String categoryName0 = cursor.getString(1);
         int categoryAmount0 = cursor.getInt(2);
@@ -108,6 +113,8 @@ public class CategoryTab extends Fragment {
             category[i].setOrientation(LinearLayout.HORIZONTAL);
             categoryBtn[i] = new Button(getContext());
             categoryAmountView[i] = new TextView(getContext());
+
+            categoryID[i] = cursor.getInt(0);
 
             String categoryName = cursor.getString(1);
             int categoryAmount = cursor.getInt(2);
@@ -217,5 +224,20 @@ public class CategoryTab extends Fragment {
                     }
                 }
         );
+
+        // それぞれのカテゴリー名のボタンを押した時の処理
+        for (int i=0; i<countCT; i++) {
+            final int finalI = i;
+            categoryBtn[i].setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getContext(), CategoryActivity.class);
+                            intent.putExtra("categoryID", categoryID[finalI]);
+                            startActivity(intent);
+                        }
+                    }
+            );
+        }
     }
 }
