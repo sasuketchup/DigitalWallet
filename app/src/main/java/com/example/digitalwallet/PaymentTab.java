@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -47,6 +48,11 @@ public class PaymentTab extends Fragment {
 
             LinearLayout varPaymentLayout = view.findViewById(R.id.paymentLayout);
             LinearLayout[] payment = new LinearLayout[(int) countPT];
+
+            // マージンをセット
+            FrameLayout.MarginLayoutParams mlp = (FrameLayout.MarginLayoutParams) varPaymentLayout.getLayoutParams();
+            mlp.setMargins(100, mlp.topMargin, 100, mlp.bottomMargin);
+            varPaymentLayout.setLayoutParams(mlp);
 
             TextView[] dateText = new TextView[(int) countPT];
             TextView[] categoryText = new TextView[(int) countPT];
@@ -97,17 +103,17 @@ public class PaymentTab extends Fragment {
                 }
                 amountText[i].setTextSize(24);
 
-                dateText[i].setPadding(100, 0, 0, 0);
+                // dateText[i].setPadding(100, 0, 0, 0);
                 dateText[i].setGravity(Gravity.RIGHT);
                 detailText[i].setGravity(Gravity.CENTER_HORIZONTAL);
                 categoryText[i].setGravity(Gravity.CENTER_HORIZONTAL);
                 amountText[i].setGravity(Gravity.RIGHT);
-                amountText[i].setPadding(0, 0, 100, 0);
+                // amountText[i].setPadding(0, 0, 100, 0);
 
-                dateText[i].setWidth(200);
-                detailText[i].setWidth(300);
-                categoryText[i].setWidth(300);
-                amountText[i].setWidth(400);
+                dateText[i].setWidth(150);
+                detailText[i].setWidth(275);
+                categoryText[i].setWidth(275);
+                amountText[i].setWidth(300);
 
                 // payment[i].setWeightSum(5);
                 // payment[i].setScaleX(0.5f);

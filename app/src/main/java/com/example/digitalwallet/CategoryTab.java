@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +57,12 @@ public class CategoryTab extends Fragment {
         LinearLayout varCategoryLayout = view.findViewById(R.id.categoryLayout);
         LinearLayout[] category = new LinearLayout[(int) countCT];
 
+        // マージンをセット
+        FrameLayout.MarginLayoutParams mlp = (FrameLayout.MarginLayoutParams) varCategoryLayout.getLayoutParams();
+        // FrameLayout.MarginLayoutParams mlp0 = (FrameLayout.MarginLayoutParams) lp0;
+        mlp.setMargins(100, mlp.topMargin, 100, mlp.bottomMargin);
+        varCategoryLayout.setLayoutParams(mlp);
+
         Button[] categoryBtn = new Button[(int) countCT];
         TextView[] categoryAmountView = new TextView[(int) countCT];
 
@@ -77,12 +84,12 @@ public class CategoryTab extends Fragment {
         }
 
         categoryBtn[0].setText(categoryName0);
-        categoryBtn[0].setPadding(100, 0, 0, 0);
+        // categoryBtn[0].setPadding(100, 0, 0, 0);
         categoryAmountView[0].setText(categoryAmount0 + "円");
         categoryAmountView[0].setTextColor(amountColor0);
         categoryAmountView[0].setTextSize(24);
         categoryAmountView[0].setGravity(Gravity.RIGHT);
-        categoryAmountView[0].setPadding(0, 0, 100, 0);
+        // categoryAmountView[0].setPadding(0, 0, 100, 0);
 
         LinearLayout.LayoutParams layoutParams0 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
         layoutParams0.weight = 1;
@@ -114,12 +121,12 @@ public class CategoryTab extends Fragment {
             }
 
             categoryBtn[i].setText(categoryName);
-            categoryBtn[i].setPadding(100, 0, 0, 0);
+            // categoryBtn[i].setPadding(100, 0, 0, 0);
             categoryAmountView[i].setText(categoryAmount + "円");
             categoryAmountView[i].setTextColor(amountColor);
             categoryAmountView[i].setTextSize(24);
             categoryAmountView[i].setGravity(Gravity.RIGHT);
-            categoryAmountView[i].setPadding(0, 0, 100, 0);
+            // categoryAmountView[i].setPadding(0, 0, 100, 0);
 
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
             layoutParams.weight = 1;
