@@ -23,7 +23,7 @@ public class MyOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // version2
-        if (oldVersion <= 1 && newVersion >=2) {
+        if (oldVersion <= 1 && newVersion >= 2) {
             version2(db);
         }
     }
