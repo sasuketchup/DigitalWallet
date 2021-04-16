@@ -24,9 +24,9 @@ import java.util.Calendar;
 public class AmountHandler {
 
     // 収支を入力または上書き・削除するメソッド
-    public void writeInOut(final Context context, final SQLiteDatabase db, View layout, LayoutInflater inflater, AlertDialog inputDialog, String[] categoryList, int category, final int[] categoryID, final int latestPTID, final ViewPager viewPager) {
+    public void writeInOut(final Context context, final SQLiteDatabase db, View layout, LayoutInflater inflater, ViewGroup root, AlertDialog inputDialog, String[] categoryList, final int[] categoryID, final int latestPTID, final ViewPager viewPager) {
 
-        layout = inflater.inflate(R.layout.input_dialog, (ViewGroup)layout.findViewById(R.id.input_root));
+        layout = inflater.inflate(R.layout.input_dialog, root);
 
         // ダイアログのボタン取得
         final Button saveBtn = layout.findViewById(R.id.inputSaveBtn);
@@ -49,6 +49,18 @@ public class AmountHandler {
         final Spinner cateSpinner = (Spinner) layout.findViewById(R.id.inputCateSpinner);
         cateSpinner.setAdapter(cateAdapter);
 
+        builder.setNegativeButton(
+                "キャンセル",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }
+        );
+
+        inputDialog = builder.show();
+
         // 保存ボタン
         final View finalLayout = layout;
         final AlertDialog finalInputDialog = inputDialog;
@@ -65,18 +77,17 @@ public class AmountHandler {
                         // 金額
                         int amount = 0;
                         EditText amountText = finalLayout.findViewById(R.id.inputAmount);
-                        CharSequence amountSt = amountText.getText();
+                        String amountSt = amountText.getText().toString();
 
                         // 金額を入力してください！！
-                        if (amountSt.toString().equals("")) {
+                        if (amountSt.equals("")) {
                             Toast.makeText(context, "金額を入力してください！", Toast.LENGTH_LONG).show();
                         } else { // 金額が入力されている場合
 
-                            amount = Integer.parseInt(String.valueOf(amountSt));
+                            amount = Integer.parseInt(amountSt);
 
                             // 選択されているアイテムからid取得
                             int index =cateSpinner.getSelectedItemPosition();
-                            category = categoryID[index];
 
                             // エディットテキストから収支の内容取得
                             EditText detailText = finalLayout.findViewById(R.id.inputDetail);
@@ -104,7 +115,7 @@ public class AmountHandler {
                             }
 
                             // 該当カテゴリーの金額取得
-                            Cursor cursor1 = db.query("CategoryTable", new String[] {"id", "category", "amount"}, "id=" + category, null, null, null, null);
+                            Cursor cursor1 = db.query("CategoryTable", new String[] {"id", "category", "amount"}, "id=" + categoryID[index], null, null, null, null);
                             cursor1.moveToFirst();
                             int categoryAmount = cursor1.getInt(2);
                             cursor1.close();
@@ -116,7 +127,7 @@ public class AmountHandler {
                             contentValues1.put("id", latestPTID);
                             contentValues1.put("month", month);
                             contentValues1.put("date", date);
-                            contentValues1.put("category", category);
+                            contentValues1.put("category", categoryID[index]);
                             contentValues1.put("inout", inout);
                             contentValues1.put("amount", amount);
                             db.insert("PaymentTable", null, contentValues1);
@@ -128,7 +139,7 @@ public class AmountHandler {
                             // 保存(カテゴリー)
                             ContentValues contentValues2 = new ContentValues();
                             contentValues2.put("amount", categoryAmount);
-                            db.update("CategoryTable", contentValues2, "id=" + category, null);
+                            db.update("CategoryTable", contentValues2, "id=" + categoryID[index], null);
 
                             // ダイアログdismiss
                             finalInputDialog.dismiss();
@@ -143,17 +154,5 @@ public class AmountHandler {
                     }
                 }
         );
-
-        builder.setNegativeButton(
-                "キャンセル",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }
-        );
-
-        inputDialog = builder.show();
     }
 }
