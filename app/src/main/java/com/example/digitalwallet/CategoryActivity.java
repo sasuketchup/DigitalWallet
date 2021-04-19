@@ -7,12 +7,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class CategoryActivity extends AppCompatActivity {
+
+    AmountHandler amountHandler = new AmountHandler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +29,9 @@ public class CategoryActivity extends AppCompatActivity {
         int categoryID = intent.getIntExtra("categoryID", 0);
 
         MyOpenHelper helper = new MyOpenHelper(this);
-        SQLiteDatabase db = helper.getWritableDatabase();
+        final SQLiteDatabase db = helper.getWritableDatabase();
+
+        final LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
         // カテゴリーの情報を取得
         Cursor cursor = db.query("CategoryTable", new String[] {"id", "category", "amount"}, "id=" + categoryID, null, null, null, null);
@@ -124,5 +131,18 @@ public class CategoryActivity extends AppCompatActivity {
         // 割り当て額表示
         TextView allocatedAmountText = findViewById(R.id.allocatedAmount);
         allocatedAmountText.setText(String.valueOf(allocatedAmount));
+
+        // 収支入力ボタン
+        findViewById(R.id.inputBtn2).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        ViewGroup root = findViewById(R.id.input_root);
+
+                        amountHandler.writeInOut(CategoryActivity.this, db, inflater, root, null, null, 0, null);
+                    }
+                }
+        );
     }
 }

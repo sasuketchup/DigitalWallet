@@ -24,9 +24,9 @@ import java.util.Calendar;
 public class AmountHandler {
 
     // 収支を入力または上書き・削除するメソッド
-    public void writeInOut(final Context context, final SQLiteDatabase db, View layout, LayoutInflater inflater, ViewGroup root, AlertDialog inputDialog, String[] categoryList, final int[] categoryID, final int latestPTID, final ViewPager viewPager) {
+    public void writeInOut(final Context context, final SQLiteDatabase db, LayoutInflater inflater, ViewGroup root, String[] categoryList, final int[] categoryID, final int latestPTID, final ViewPager viewPager) {
 
-        layout = inflater.inflate(R.layout.input_dialog, root);
+        View layout = inflater.inflate(R.layout.input_dialog, root);
 
         // ダイアログのボタン取得
         final Button saveBtn = layout.findViewById(R.id.inputSaveBtn);
@@ -59,7 +59,7 @@ public class AmountHandler {
                 }
         );
 
-        inputDialog = builder.show();
+        AlertDialog inputDialog = builder.show();
 
         // 保存ボタン
         final View finalLayout = layout;
