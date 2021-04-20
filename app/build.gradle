@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         debug {
-            storeFile file('C:\\Users\\sousuke\\AndroidStudioProjects\\DigitalWallet\\app\\libs\\keystore\\debug.jks')
+            storeFile file('..\\app\\libs\\keystore\\debug.jks')
         }
     }
     compileSdkVersion 28
@@ -19,6 +19,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+        debug {
             signingConfig signingConfigs.debug
         }
     }
