@@ -140,7 +140,7 @@ public class CategoryActivity extends AppCompatActivity {
 
                         ViewGroup root = findViewById(R.id.input_root);
 
-                        amountHandler.writeInOut(CategoryActivity.this, db, inflater, root, null, null, 0, null);
+                        amountHandler.writeInOut(CategoryActivity.this, db, inflater, root, null);
                     }
                 }
         );

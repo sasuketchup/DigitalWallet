@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +25,7 @@ import java.util.Calendar;
 public class AmountHandler {
 
     // 収支を入力または上書き・削除するメソッド
-    public void writeInOut(final Context context, final SQLiteDatabase db, LayoutInflater inflater, ViewGroup root, String[] categoryList, final int[] categoryID, final int latestPTID, final ViewPager viewPager) {
+    public void writeInOut(final Context context, final SQLiteDatabase db, LayoutInflater inflater, ViewGroup root, final ViewPager viewPager) {
 
         View layout = inflater.inflate(R.layout.input_dialog, root);
 
@@ -36,6 +37,22 @@ public class AmountHandler {
         // 修正・削除ボタン無効化
         fixBtn.setEnabled(false);
         deleteBtn.setEnabled(false);
+
+        // DBからカテゴリーのIDとリスト取得
+        long countCT = DatabaseUtils.queryNumEntries(db, "CategoryTable");
+        final int[] categoryID = new int[(int) countCT];
+        String[] categoryList = new String[(int) countCT];
+        Cursor cursor0 = db.query("CategoryTable", new String[] {"id", "category", "amount"}, null, null, null, null, null);
+        cursor0.moveToFirst();
+        categoryID[0] = cursor0.getInt(0);
+        categoryList[0] = cursor0.getString(1);
+        cursor0.moveToLast();
+        for (int i=1; i<countCT; i++) {
+            categoryID[i] = cursor0.getInt(0);
+            categoryList[i] = cursor0.getString(1);
+            cursor0.moveToPrevious();
+        }
+        cursor0.close();
 
         // ダイアログ生成
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -73,6 +90,12 @@ public class AmountHandler {
                         Calendar calendar = Calendar.getInstance();
                         int month = calendar.get(Calendar.MONTH) + 1;
                         int date = calendar.get(Calendar.DATE);
+
+                        // 支払いテーブルの最新のid取得(挿入する箇所のidのために)
+                        Cursor cursor = db.query("PaymentTable", new String[] {"id", "month", "date", "category", "inout", "amount"}, null, null, null, null, null);
+                        cursor.moveToLast();
+                        int latestPTID = cursor.getInt(0) + 1;
+                        cursor.close();
 
                         // 金額
                         int amount = 0;
@@ -143,9 +166,15 @@ public class AmountHandler {
 
                             // ダイアログdismiss
                             finalInputDialog.dismiss();
-                            // アクティビティ再起動(タブ保持)
-                            Intent intent1 = new Intent(context, MainActivity.class);
-                            intent1.putExtra("keep_item", viewPager.getCurrentItem());
+
+                            // アクティビティ再起動
+                            Intent intent1;
+                            if (viewPager == null) { // カテゴリー画面の場合
+                                intent1 = new Intent(context, CategoryActivity.class);
+                            } else { // メイン画面の場合タブ保持
+                                intent1 = new Intent(context, MainActivity.class);
+                                intent1.putExtra("keep_item", viewPager.getCurrentItem());
+                            }
                             ((MainActivity)context).finish();
                             ((MainActivity)context).overridePendingTransition(0, 0);
                             context.startActivity(intent1);
