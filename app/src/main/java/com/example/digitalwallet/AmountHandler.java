@@ -25,7 +25,7 @@ import java.util.Calendar;
 public class AmountHandler {
 
     // 収支を入力または上書き・削除するメソッド
-    public void writeInOut(final Context context, final SQLiteDatabase db, LayoutInflater inflater, ViewGroup root, final ViewPager viewPager) {
+    public void writeInOut(final Context context, final SQLiteDatabase db, LayoutInflater inflater, ViewGroup root, int selectedCateID, final ViewPager viewPager) {
 
         View layout = inflater.inflate(R.layout.input_dialog, root);
 
@@ -54,6 +54,14 @@ public class AmountHandler {
         }
         cursor0.close();
 
+        // 選ばれているカテゴリーのidと配列のidを照合し、indexを取得
+        int selectedCateIndex = 0;
+        for (int i=0; i<countCT; i++) {
+            if (selectedCateID == categoryID[i]) {
+                selectedCateIndex = i;
+            }
+        }
+
         // ダイアログ生成
         final AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("収支入力");
@@ -65,6 +73,8 @@ public class AmountHandler {
 
         final Spinner cateSpinner = (Spinner) layout.findViewById(R.id.inputCateSpinner);
         cateSpinner.setAdapter(cateAdapter);
+        // デフォルト値
+        cateSpinner.setSelection(selectedCateIndex);
 
         builder.setNegativeButton(
                 "キャンセル",
@@ -171,6 +181,7 @@ public class AmountHandler {
                             Intent intent1;
                             if (viewPager == null) { // カテゴリー画面の場合
                                 intent1 = new Intent(context, CategoryActivity.class);
+                                intent1.putExtra("categoryID", categoryID[index]);
                             } else { // メイン画面の場合タブ保持
                                 intent1 = new Intent(context, MainActivity.class);
                                 intent1.putExtra("keep_item", viewPager.getCurrentItem());

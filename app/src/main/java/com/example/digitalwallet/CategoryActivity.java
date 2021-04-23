@@ -26,7 +26,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         // インテントを受け取る
         Intent intent = getIntent();
-        int categoryID = intent.getIntExtra("categoryID", 0);
+        final int categoryID = intent.getIntExtra("categoryID", 0);
 
         MyOpenHelper helper = new MyOpenHelper(this);
         final SQLiteDatabase db = helper.getWritableDatabase();
@@ -140,7 +140,7 @@ public class CategoryActivity extends AppCompatActivity {
 
                         ViewGroup root = findViewById(R.id.input_root);
 
-                        amountHandler.writeInOut(CategoryActivity.this, db, inflater, root, null);
+                        amountHandler.writeInOut(CategoryActivity.this, db, inflater, root, categoryID, null);
                     }
                 }
         );

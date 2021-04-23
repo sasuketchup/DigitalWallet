@@ -3,7 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         debug {
-            storeFile file('..\\app\\libs\\keystore\\debug.jks')
+            storeFile file('C:\\Users\\sousuke\\AndroidStudioProjects\\DigitalWallet\\app\\libs\\keystore\\debug.jks')
+            storePassword 'storedwpass'
+            keyAlias = 'key0'
+            keyPassword 'keydwpass'
         }
     }
     compileSdkVersion 28
@@ -11,8 +14,8 @@ android {
         applicationId "com.example.digitalwallet"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 2
-        versionName "1.1"
+        versionCode 3
+        versionName "1.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

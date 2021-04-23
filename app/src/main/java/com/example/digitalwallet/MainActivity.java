@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity {
 
                         ViewGroup root = findViewById(R.id.input_root);
 
-                        amountHandler.writeInOut(MainActivity.this, db, inflater, root, viewPager);
+                        amountHandler.writeInOut(MainActivity.this, db, inflater, root, 0, viewPager);
 
 //                        layout = inflater.inflate(R.layout.input_dialog, (ViewGroup)findViewById(R.id.input_root));
 //
